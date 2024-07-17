@@ -29,19 +29,30 @@ func (CS ComparableSlice[T]) IndexOf(c T) int {
 // 定义一个类型别名，T 是任意的类型
 type AnySlice[T any] []T
 
-func (ga AnySlice[T]) Find(f func(T) bool) (*T, int) {
-	for i, v := range ga {
+// 返回第一个找到的元素及其索引
+func (AS AnySlice[T]) Find(f func(T) bool) (*T, int) {
+	for i, v := range AS {
 		if f(v) {
-			return &v, i
+			// 使用临时变量保存匹配的元素，然后返回其指针和索引
+			result := v
+			return &result, i
 		}
 	}
 
+	// 如果找不到匹配的元素，返回 nil 和 -1
 	return nil, -1
 }
 
-func (ga AnySlice[T]) Filter(f func(T) bool) AnySlice[T] {
-	r := make([]T, 0)
-	for _, v := range ga {
+// Filter 方法用于过滤符合条件的元素
+// 例如:
+// var slice AnySlice[int] = []int{1, 2, 3, 4, 5, 6}
+//
+//	filtered := slice.Filter(func(v int) bool {
+//		return v%2 == 0
+//	})
+func (AS AnySlice[T]) Filter(f func(T) bool) AnySlice[T] {
+	var r AnySlice[T] // 定义一个符合类型别名的切片
+	for _, v := range AS {
 		if f(v) {
 			r = append(r, v)
 		}
@@ -50,9 +61,10 @@ func (ga AnySlice[T]) Filter(f func(T) bool) AnySlice[T] {
 	return r
 }
 
-func SplitMap[IN any, OUT any](input AnySlice[IN], f func(in IN) (bool, OUT)) (match []OUT, mismatch []OUT) {
-	for _, i := range input {
-		isMatch, out := f(i)
+// SplitMap 函数用于将输入切片中的元素按条件分别放入两个切片
+func SplitMap[IN any, OUT any](AS AnySlice[IN], f func(in IN) (bool, OUT)) (match []OUT, mismatch []OUT) {
+	for _, in := range AS {
+		isMatch, out := f(in)
 		if isMatch {
 			match = append(match, out)
 		} else {
