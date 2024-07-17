@@ -61,9 +61,22 @@ func (AS AnySlice[T]) Filter(f func(T) bool) AnySlice[T] {
 	return r
 }
 
+func (AS AnySlice[T]) SplitTrueFalse(f func(T) bool) ([]T, []T) {
+	r1 := make([]T, 0)
+	r2 := make([]T, 0)
+	for _, v := range AS {
+		if f(v) {
+			r1 = append(r1, v)
+		} else {
+			r2 = append(r2, v)
+		}
+	}
+	return r1, r2
+}
+
 // SplitMap 函数用于将输入切片中的元素按条件分别放入两个切片
 // eligible:符合条件
-func SplitMap[IN any, OUT any](AS AnySlice[IN], f func(in IN) (bool, OUT)) (eligibleOuts []OUT, notEligibleOuts []OUT) {
+func SplitMap[IN any, OUT any](AS AnySlice[IN], f func(IN) (bool, OUT)) (eligibleOuts []OUT, notEligibleOuts []OUT) {
 	for _, in := range AS {
 		eligible, out := f(in)
 		if eligible {
@@ -89,19 +102,6 @@ func Reduce[T any, OUT any](slice []T, initValue OUT, f func(idx int, val OUT, i
 		initValue = f(i, initValue, v)
 	}
 	return initValue
-}
-
-func (input AnySlice[T]) SplitTrueFalse(f func(in T) bool) ([]T, []T) {
-	r1 := make([]T, 0)
-	r2 := make([]T, 0)
-	for _, v := range input {
-		if f(v) {
-			r1 = append(r1, v)
-		} else {
-			r2 = append(r2, v)
-		}
-	}
-	return r1, r2
 }
 
 func FlatMap[IN any, OUT any](input AnySlice[IN], f func(in IN) []OUT) AnySlice[OUT] {
