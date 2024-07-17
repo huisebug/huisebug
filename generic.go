@@ -62,13 +62,14 @@ func (AS AnySlice[T]) Filter(f func(T) bool) AnySlice[T] {
 }
 
 // SplitMap 函数用于将输入切片中的元素按条件分别放入两个切片
-func SplitMap[IN any, OUT any](AS AnySlice[IN], f func(in IN) (bool, OUT)) (match []OUT, mismatch []OUT) {
+// eligible:符合条件
+func SplitMap[IN any, OUT any](AS AnySlice[IN], f func(in IN) (bool, OUT)) (eligibleOuts []OUT, notEligibleOuts []OUT) {
 	for _, in := range AS {
-		isMatch, out := f(in)
-		if isMatch {
-			match = append(match, out)
+		eligible, out := f(in)
+		if eligible {
+			eligibleOuts = append(eligibleOuts, out)
 		} else {
-			mismatch = append(mismatch, out)
+			notEligibleOuts = append(notEligibleOuts, out)
 		}
 	}
 
