@@ -17,7 +17,7 @@ type Named interface {
 type ComparableSlice[T comparable] []T
 
 // 查找给定元素 c 在切片中的索引
-func (CS ComparableSlice[T]) IndexOf(c T) int {
+func (CS ComparableSlice[T]) GetIndex(c T) int {
 	for i, v := range CS {
 		if v == c {
 			return i
@@ -61,22 +61,23 @@ func (AS AnySlice[T]) Filter(f func(T) bool) AnySlice[T] {
 	return r
 }
 
-func (AS AnySlice[T]) SplitTrueFalse(f func(T) bool) ([]T, []T) {
-	r1 := make([]T, 0)
-	r2 := make([]T, 0)
+// 方法用于将输入切片中的元素按条件判断后将元素分别放入两个切片
+// eligible:符合条件
+func (AS AnySlice[T]) SplitSlice(f func(T) bool) (eligibleOuts []T, notEligibleOuts []T) {
+
 	for _, v := range AS {
 		if f(v) {
-			r1 = append(r1, v)
+			eligibleOuts = append(eligibleOuts, v)
 		} else {
-			r2 = append(r2, v)
+			notEligibleOuts = append(notEligibleOuts, v)
 		}
 	}
-	return r1, r2
+	return
 }
 
-// SplitMap 函数用于将输入切片中的元素按条件分别放入两个切片
+// 函数用于将输入切片中的元素按条件处理后将返回值分别放入两个切片
 // eligible:符合条件
-func SplitMap[IN any, OUT any](AS AnySlice[IN], f func(IN) (bool, OUT)) (eligibleOuts []OUT, notEligibleOuts []OUT) {
+func SplitSliceOut[IN any, OUT any](AS AnySlice[IN], f func(IN) (bool, OUT)) (eligibleOuts []OUT, notEligibleOuts []OUT) {
 	for _, in := range AS {
 		eligible, out := f(in)
 		if eligible {
