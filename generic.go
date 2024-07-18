@@ -104,7 +104,6 @@ func ConditionConversion[IN any, OUT any](AS AnySlice[IN], f func(IN) OUT) []OUT
 // 函数用于将输入切片中的元素按idx保留后和initValue初始值进行换算后得到返回值
 // Retain:保留
 // calculation:换算
-
 func RetainCalculation[T any, OUT any](slice []T, initValue OUT, f func(idx int, val OUT, in T) OUT) OUT {
 	for i, v := range slice {
 		initValue = f(i, initValue, v)
@@ -112,9 +111,12 @@ func RetainCalculation[T any, OUT any](slice []T, initValue OUT, f func(idx int,
 	return initValue
 }
 
-func FlatMap[IN any, OUT any](input AnySlice[IN], f func(in IN) []OUT) AnySlice[OUT] {
-	var o []OUT = nil
-	for _, i := range input {
+// 函数用于将输入切片中的元素按条件换算后再打散入输出切片
+// expand:展开
+// calculation:换算
+func ExpandcalCulation[IN any, OUT any](AS AnySlice[IN], f func(in IN) []OUT) AnySlice[OUT] {
+	var o AnySlice[OUT]
+	for _, i := range AS {
 		o = append(o, f(i)...)
 	}
 	return o
