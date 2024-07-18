@@ -90,9 +90,13 @@ func SplitSliceOut[IN any, OUT any](AS AnySlice[IN], f func(IN) (bool, OUT)) (el
 	return
 }
 
-func Map[IN any, OUT any](input AnySlice[IN], f func(in IN) OUT) []OUT {
-	var o []OUT = nil
-	for _, i := range input {
+// 函数用于将输入切片中的元素按条件换算后返回值放到输出切片
+// condition:条件
+// conversion:换算
+
+func ConditionConversion[IN any, OUT any](AS AnySlice[IN], f func(IN) OUT) []OUT {
+	var o []OUT
+	for _, i := range AS {
 		o = append(o, f(i))
 	}
 	return o
