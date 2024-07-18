@@ -13,7 +13,7 @@ func Print(str string) {
 type ComparableSlice[T comparable] []T
 
 // 查找给定元素 c 在切片中的索引
-func (CS ComparableSlice[T]) GetIndex(c T) int {
+func (CS ComparableSlice[T]) IndexBy(c T) int {
 	for i, v := range CS {
 		if v == c {
 			return i
@@ -125,12 +125,24 @@ type Namer interface {
 
 type NamerSlice[T Namer] []T
 
+// 打印所有的名字
 func (NS NamerSlice[T]) Names() []string {
 	ns := []string{}
 	for _, n := range NS {
 		ns = append(ns, n.Name())
 	}
 	return ns
+}
+
+// 获取名字的索引
+func (NS NamerSlice[T]) IndexByName(name string) int {
+	for i, n := range NS {
+		if n.Name() == name {
+			return i
+		}
+	}
+
+	return -1
 }
 
 func (NS NamerSlice[T]) Find(name string) *T {
@@ -144,16 +156,6 @@ func (NS NamerSlice[T]) Find(name string) *T {
 
 func (NS NamerSlice[T]) IndexOf(item T) int {
 	return NS.IndexByName(item.Name())
-}
-
-func (NS NamerSlice[T]) IndexByName(name string) int {
-	for i, n := range NS {
-		if n.Name() == name {
-			return i
-		}
-	}
-
-	return -1
 }
 
 func (NS NamerSlice[T]) Len() int {
