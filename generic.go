@@ -93,7 +93,6 @@ func SplitSliceOut[IN any, OUT any](AS AnySlice[IN], f func(IN) (bool, OUT)) (el
 // 函数用于将输入切片中的元素按条件换算后返回值放到输出切片
 // condition:条件
 // conversion:换算
-
 func ConditionConversion[IN any, OUT any](AS AnySlice[IN], f func(IN) OUT) []OUT {
 	var o []OUT
 	for _, i := range AS {
@@ -102,7 +101,11 @@ func ConditionConversion[IN any, OUT any](AS AnySlice[IN], f func(IN) OUT) []OUT
 	return o
 }
 
-func Reduce[T any, OUT any](slice []T, initValue OUT, f func(idx int, val OUT, in T) OUT) OUT {
+// 函数用于将输入切片中的元素按idx保留后和initValue初始值进行换算后得到返回值
+// Retain:保留
+// calculation:换算
+
+func RetainCalculation[T any, OUT any](slice []T, initValue OUT, f func(idx int, val OUT, in T) OUT) OUT {
 	for i, v := range slice {
 		initValue = f(i, initValue, v)
 	}
