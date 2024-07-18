@@ -9,10 +9,6 @@ func Print(str string) {
 	fmt.Println(str)
 }
 
-type Named interface {
-	Nm() string
-}
-
 // 定义一个类型别名，T 必须是可比较的类型
 type ComparableSlice[T comparable] []T
 
@@ -122,32 +118,37 @@ func ExpandcalCulation[IN any, OUT any](AS AnySlice[IN], f func(in IN) []OUT) An
 	return o
 }
 
-type NamedArray[T Named] []T
+// 专用于有Name成员的interface
+type Namer interface {
+	Name() string
+}
 
-func (na NamedArray[T]) Names() []string {
+type NamerSlice[T Namer] []T
+
+func (NS NamerSlice[T]) Names() []string {
 	ns := []string{}
-	for _, i := range na {
-		ns = append(ns, i.Nm())
+	for _, n := range NS {
+		ns = append(ns, n.Name())
 	}
 	return ns
 }
 
-func (na NamedArray[T]) Find(name string) *T {
-	i := na.IndexByName(name)
+func (NS NamerSlice[T]) Find(name string) *T {
+	i := NS.IndexByName(name)
 	if i < 0 {
 		return nil
 	}
 
-	return &na[i]
+	return &NS[i]
 }
 
-func (na NamedArray[T]) IndexOf(item T) int {
-	return na.IndexByName(item.Nm())
+func (NS NamerSlice[T]) IndexOf(item T) int {
+	return NS.IndexByName(item.Name())
 }
 
-func (na NamedArray[T]) IndexByName(name string) int {
-	for i, n := range na {
-		if n.Nm() == name {
+func (NS NamerSlice[T]) IndexByName(name string) int {
+	for i, n := range NS {
+		if n.Name() == name {
 			return i
 		}
 	}
@@ -155,17 +156,17 @@ func (na NamedArray[T]) IndexByName(name string) int {
 	return -1
 }
 
-func (na NamedArray[T]) Len() int {
-	return len(na)
+func (NS NamerSlice[T]) Len() int {
+	return len(NS)
 }
 
-func (na NamedArray[T]) Less(i, j int) bool {
-	return strings.Compare(na[i].Nm(), na[j].Nm()) < 0
+func (NS NamerSlice[T]) Less(i, j int) bool {
+	return strings.Compare(NS[i].Name(), NS[j].Name()) < 0
 }
 
 // Swap swaps the elements with indexes i and j.
-func (na NamedArray[T]) Swap(i, j int) {
-	na[i], na[j] = na[j], na[i]
+func (NS NamerSlice[T]) Swap(i, j int) {
+	NS[i], NS[j] = NS[j], NS[i]
 }
 
 type GSet[K comparable] map[K]struct{}
