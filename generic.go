@@ -216,10 +216,11 @@ func (CS ComparableSet[T]) Contains(item T) bool {
 	return exists
 }
 
-func (g1 ComparableSet[T]) Sub(g2 ComparableSet[T]) {
-	for key := range g1 {
-		if _, has := g2[key]; has {
-			delete(g1, key)
+// 从集合中删除在另一个集合中存在的元素
+func (CS1 ComparableSet[T]) RemoveAll(CS2 ComparableSet[T]) {
+	for key := range CS1 {
+		if _, has := CS2[key]; has {
+			delete(CS1, key)
 		}
 	}
 }
