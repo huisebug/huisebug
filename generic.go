@@ -225,7 +225,8 @@ func (CS1 ComparableSet[T]) RemoveAll(CS2 ComparableSet[T]) {
 	}
 }
 
-func (CS ComparableSet[T]) Values() []T {
+// 将 ComparableSet 类型的集合中的所有键提取到一个切片中并返回
+func (CS ComparableSet[T]) ComparableSlice() []T {
 	keys := []T{}
 	for key := range CS {
 		keys = append(keys, key)
@@ -234,10 +235,14 @@ func (CS ComparableSet[T]) Values() []T {
 	return keys
 }
 
-func Keys[M ~map[T]V, T comparable, V any](m M) []T {
-	r := make([]T, 0, len(m))
+// M ~map[T]V：M 是一个类型参数，表示类型 M 必须是一个映射类型，其中键的类型为 T，值的类型为 V。
+// ~map[T]V 表示 M 必须是一个 map 类型，其键是 T 类型，值是 V 类型。
+// T comparable：T 必须是一个可比较的类型（即可以用来作为映射的键）。
+// V any：V 可以是任何类型，因为函数不关心值的类型。
+func ComparableSetConvertComparableSlice[M ~map[T]V, T comparable, V any](m M) []T {
+	CS := make([]T, 0, len(m))
 	for k := range m {
-		r = append(r, k)
+		CS = append(CS, k)
 	}
-	return r
+	return CS
 }
